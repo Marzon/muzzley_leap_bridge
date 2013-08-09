@@ -1,0 +1,113 @@
+<html>
+  <head>
+    <title>Muzzley and Leap Motion Bridge</title>
+    <script src="muzzley-client-0.3.2.min.js"></script>
+    <script src="leap.js"></script>
+    <style type="text/css">
+      body {
+        font-family: Verdana;}
+    </style>
+  </head>
+  <body>
+    <div >
+    <div class="span2" style="float:left">
+        <img src="logo_muzzley.png" width="179" height="67">
+    </div>
+      <div class="span2">
+        <img src="leap_motion_logo.png" width="250" height="100">
+      </div>
+</div><div>
+    <h3>Muzzley and Leap Motion Bridge</h3>
+    Please, connect your Leap Motion Controller, inform the activity code and click CONTROL
+      <input type="text" id="code">
+      <input type="button" onclick="control()" value="Control">
+    </div>
+    <script>
+
+
+        var myParticipant;
+
+        function sendData(direction) {
+            myParticipant.sendWidgetData({
+                "w": "swipeNavigator",
+                "e": "swipe", 
+                "c": "swipe",
+                "v": direction
+              });
+
+        }
+
+        function control() {
+           var userToken = 'guest';
+              // The activity id is encoded in the activity QR code
+              //var activityId = 'a28bb1';
+              var activityId = document.getElementById("code").value;
+
+              muzzley.on('error', function(err){
+                console.log("Error: " + err + " activity:"+activityId);
+              });
+
+
+
+            
+
+              muzzley.connectUser(userToken, activityId, function(err, participant){
+                if (err) return console.log("Connect user error: " + err );
+                console.log('User joinedActivity');
+                myParticipant = participant;
+                participant.on('changeWidget', function(widget){
+                  console.log('changeWidget received for widget ' + widget.widget);
+                  
+                  /*if (widget.widget === 'swipeNavigator') {
+                   
+                    participant.sendWidgetData({
+                      "w": "swipeNavigator",
+                      "e": "swipe", 
+                      "c": "swipe",
+                      "v": "u"
+         
+                    });
+
+                    participant.sendWidgetData({
+                      "w": "swipeNavigator",
+                      "e": "swipe", 
+                      "c": "swipe",
+                      "v": "d"
+         
+                    });
+
+                    
+                  } */
+                });
+              });
+        }
+
+        
+// fazer join com o server
+          Leap.loop({enableGestures: true}, function(obj) {
+            if (obj.gestures.length > 0) {
+              obj.gestures.forEach(function(gesture) {
+                if (gesture.type=="swipe" && gesture.state=="stop") {
+                  if (gesture.direction.x>0) {
+                    // enviar par ao server o r
+                      console.log("direita");
+                      //sendData("r");
+                      sendData("u");
+                  } else {
+                    // enviar par ao server o l
+                      console.log("esquerda");
+                      //sendData("l");
+                      sendData("d");
+                  }
+
+                }
+              });
+            }
+          });
+
+
+     
+
+    </script>
+  </body>
+</html>
