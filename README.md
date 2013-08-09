@@ -13,3 +13,7 @@ Docs:
 http://www.muzzley.com
 http://www.leapmotion.com/
 
+
+Licences:
+
+Muzzley and Leap Motion are trademarks of its own companies.
